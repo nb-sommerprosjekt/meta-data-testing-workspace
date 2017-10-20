@@ -79,10 +79,13 @@ def write_only_unique_terms_to_dewey(dict_with_dewey_and_keywords, dict_with_key
 def tokenizeText(text):
     tokenizedText = word_tokenize(text, language="norwegian")
     return tokenizedText
+
 def isAnyKeywordsInText(tokenizedText, list_of_keywords):
     return any(i in tokenizedText for i in list_of_keywords)
+
 def findWhichKeyWordsAreInText(tokenizedText, list_of_keywords):
     return list(set(tokenizedText).intersection(list_of_keywords))
+
 def whichDeweyDoesTheKeywordBelongTo(keywords_from_text, dict_containing_keywords_and_deweys):
     inv_dictionary = {}
     for key, value in dict_containing_keywords_and_deweys.items():
@@ -113,7 +116,7 @@ if __name__ == '__main__':
     uniqueTermsDict, uniqueKeywords = write_only_unique_terms_to_dewey(nokkelord_og_dewey, keyword_frequencies)
     print(len(uniqueTermsDict))
 
-    deweyarray,docs = get_articles("tekst/combined3deweys")
+    deweyarray,docs = get_articles("tekst/just_articles_test")
     recog_results = []
     i = 0
     ingen_keywords = 0
@@ -130,10 +133,19 @@ if __name__ == '__main__':
             keywordsInText = findWhichKeyWordsAreInText(tokenizedText, uniqueKeywords)
 
             result = Counter(whichDeweyDoesTheKeywordBelongTo(keywordsInText, uniqueTermsDict))
-            if deweyarray[i] == result[deweyarray[i]]:
+            top1 = result.most_common(1)
+            print(top1[0][0])
+            if (top1[0][0]==deweyarray[i]):
                 isInResultDictionary = isInResultDictionary + 1
-            #print(str(deweyarray[i]) + " " + str(result))
+                print(result)
+                print(deweyarray[i])
 
+            # if top1[deweyarray[i]]>=1:
+            #     isInResultDictionary = isInResultDictionary + 1
+            #
+            #     print(str(deweyarray[i]) + " " + str(result))
+            #     print(str(isInResultDictionary))
+            #     time.sleep(1)
         else:
             print("Ingen nøkkelord finnes i teksten. Prosessen stoppes.")
             ingen_keywords = ingen_keywords + 1
